@@ -1,14 +1,15 @@
 package com.shimita.crud.repository;
 
-import com.shimita.crud.model.UserModel;
-import org.springframework.data.domain.Example;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.shimita.crud.model.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserModel, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
+    // find user by email/username
+    Optional<User> findByUsername(String usernameString);
 }
