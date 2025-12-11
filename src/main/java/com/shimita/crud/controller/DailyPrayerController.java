@@ -4,62 +4,114 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.shimita.crud.model.DailyPrayer;
 import com.shimita.crud.model.User;
 import com.shimita.crud.service.DailyPrayerService;
 
+// ✅ same ApiResponse as used in UserController
+class ApiResponse {
+    private boolean success;
+    private String message;
+
+    public ApiResponse(boolean success, String message) {
+        this.success = success;
+        this.message = message;
+    }
+
+    public boolean isSuccess() { return success; }
+    public String getMessage() { return message; }
+}
+
 @RestController
-@RequestMapping("api/v1/daily")
+@RequestMapping("/api/v1/daily")
 public class DailyPrayerController {
+
     @Autowired
-    DailyPrayerService dailyPrayerService;
+    private DailyPrayerService dailyPrayerService;
 
-    // save daily prayer
-    @PostMapping("create")
-    public DailyPrayer saveDailyPrayer(@RequestBody DailyPrayer dailyPrayer) {
+    // ✅ Create a new daily prayer
+    @PostMapping("/create")
+    public ResponseEntity<?> saveDailyPrayer(@RequestBody DailyPrayer dailyPrayer) {
+        try {
+            Optional<User> userDetails = dailyPrayerService.getUserDetails(dailyPrayer.getUsername());
 
-        Optional<User> userDetails = dailyPrayerService.getUserDetails(dailyPrayer.getUsername());
-        dailyPrayer.setRole(userDetails.get().getRole());
-        dailyPrayer.setPhone(userDetails.get().getPhone());
-        dailyPrayer.setAuthor(userDetails.get().getFirst_name() + " " + userDetails.get().getLast_name());
-        dailyPrayer.setImagePath(
-            (dailyPrayer.getImagePath()==null || dailyPrayer.getImagePath().isEmpty())
-            ? userDetails.get().getImagePath(): dailyPrayer.getImagePath());
+            if (userDetails.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse(false, "User not found"));
+            }
 
-        return dailyPrayerService.saveDailyPrayer(dailyPrayer);
+            User user = userDetails.get();
+            dailyPrayer.setRole(user.getRole());
+            dailyPrayer.setPhone(user.getPhone());
+            dailyPrayer.setAuthor(user.getFirst_name() + " " + user.getLast_name());
+
+            // Use user's profile image if not provided
+            dailyPrayer.setImagePath(
+                (dailyPrayer.getImagePath() == null || dailyPrayer.getImagePath().isEmpty())
+                    ? user.getImagePath()
+                    : dailyPrayer.getImagePath()
+            );
+
+            dailyPrayerService.saveDailyPrayer(dailyPrayer);
+            return ResponseEntity.ok(new ApiResponse(true, "Daily prayer created successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Error creating daily prayer: " + e.getMessage()));
+        }
     }
 
-    // get all daily prayer
-    @GetMapping("all")
-    public List<DailyPrayer> getDailyPrayers() {
-        return dailyPrayerService.getAllDailyPrayers();
+    // ✅ Get all daily prayers
+    @GetMapping("/all")
+    public ResponseEntity<?> getDailyPrayers() {
+        try {
+            List<DailyPrayer> prayers = dailyPrayerService.getAllDailyPrayers();
+            return ResponseEntity.ok(prayers);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Error fetching prayers: " + e.getMessage()));
+        }
     }
 
-    // get specific daily prayer
-    @GetMapping("{prayerId}")
-    public Optional<DailyPrayer> getDailyPrayer(@PathVariable Long prayerId) {
-        return dailyPrayerService.getDailyPrayer(prayerId);
+    // ✅ Get specific daily prayer by ID
+    @GetMapping("/specific/{prayerId}")
+    public ResponseEntity<?> getDailyPrayer(@PathVariable Long prayerId) {
+        try {
+            Optional<DailyPrayer> prayer = dailyPrayerService.getDailyPrayer(prayerId);
+
+            if (prayer.isEmpty()) {
+                return ResponseEntity.ok(new ApiResponse(false, "Prayer not found"));
+            }
+
+            return ResponseEntity.ok(prayer.get());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Error fetching prayer: " + e.getMessage()));
+        }
     }
 
-    // update specific prayer
-    @PutMapping("{prayerId}")
-    public DailyPrayer updateDailyPrayer(@RequestBody DailyPrayer dailyPrayer, @PathVariable Long prayerId) {
-        return dailyPrayerService.updateDailyPrayer(dailyPrayer, prayerId);
+    // ✅ Update existing daily prayer
+    @PutMapping("/update/{prayerId}")
+    public ResponseEntity<ApiResponse> updateDailyPrayer(@RequestBody DailyPrayer dailyPrayer, @PathVariable Long prayerId) {
+        try {
+            dailyPrayerService.updateDailyPrayer(dailyPrayer, prayerId);
+            return ResponseEntity.ok(new ApiResponse(true, "Daily prayer updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Error updating prayer: " + e.getMessage()));
+        }
     }
 
-    // delete specific prayer
-    @DeleteMapping("{prayerId}")
-    public String deletePrayer(@PathVariable Long prayerId) {
-        return dailyPrayerService.deletePrayer(prayerId);
+    // ✅ Delete specific prayer
+    @DeleteMapping("/delete/{prayerId}")
+    public ResponseEntity<ApiResponse> deletePrayer(@PathVariable Long prayerId) {
+        try {
+            String result = dailyPrayerService.deletePrayer(prayerId);
+            return ResponseEntity.ok(new ApiResponse(true, result));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(new ApiResponse(false, "Error deleting prayer: " + e.getMessage()));
+        }
     }
-
 }

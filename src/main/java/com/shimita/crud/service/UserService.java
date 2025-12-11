@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
-
+ 
     // get user by email or username
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
