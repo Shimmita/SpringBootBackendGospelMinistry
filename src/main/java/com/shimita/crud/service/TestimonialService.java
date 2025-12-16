@@ -15,8 +15,8 @@ public class TestimonialService {
 
     // save testimonial
     public Testimonial saveTestimonial(Testimonial testimonial) {
-        if (testimonial.getUsername().isBlank() || testimonial.getRole().isBlank()
-                || testimonial.getDetails().isBlank()) {
+        if (!testimonial.getUsername().isBlank() || !testimonial.getRole().isBlank()
+                || !testimonial.getDetails().isBlank()) {
             return testimonialRepo.save(testimonial);
         } else
             return testimonial;
