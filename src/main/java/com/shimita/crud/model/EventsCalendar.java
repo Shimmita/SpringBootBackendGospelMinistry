@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class EventsCalendar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long eventId;
+    private Long mainId;
     private String username;
     private String phone;
     private String author;

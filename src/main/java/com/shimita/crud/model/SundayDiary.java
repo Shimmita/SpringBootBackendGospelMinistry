@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class SundayDiary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long diaryId;
+    private Long mainId;
     private String username;
     private String phone;
     private String author;

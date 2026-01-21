@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class DailyPrayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long prayerId;
+    private Long mainId;
     private String username;
     private String phone;
     private String author;

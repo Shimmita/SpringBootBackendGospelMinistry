@@ -60,14 +60,14 @@ public class UserController {
         Optional<User> userOptional = userService.getUserObjectByUserName(loginRequest.getUsername());
 
         if (userOptional.isEmpty()) {
-            return ResponseEntity.ok(new ApiResponse(false, "User not found"));
+            return (ResponseEntity<?>) ResponseEntity.badRequest();
         }
 
         User user = userOptional.get();
         boolean passwordMatch = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
 
         if (!passwordMatch) {
-            return ResponseEntity.ok(new ApiResponse(false, "Invalid credentials"));
+            return (ResponseEntity<?>) ResponseEntity.notFound();
         }
 
         return ResponseEntity.ok(user);

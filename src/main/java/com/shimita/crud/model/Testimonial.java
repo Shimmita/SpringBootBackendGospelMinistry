@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class Testimonial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long testimonialId;
+    private Long mainId;
     private String username;
     private String phone;
     private String author;

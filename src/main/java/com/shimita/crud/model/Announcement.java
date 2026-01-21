@@ -15,14 +15,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "other")
+@Table(name = "announcements")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Other {
-    @Id
+public class Announcement {
+     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long otherId;
+    private Long mainId;
     private String username;
     private String phone;
     private String author;
@@ -34,5 +34,4 @@ public class Other {
     private Date createdAt;
     @UpdateTimestamp
     private Date updatedAt;
-
 }

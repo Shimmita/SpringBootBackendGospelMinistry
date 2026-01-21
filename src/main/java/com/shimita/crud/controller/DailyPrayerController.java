@@ -39,6 +39,7 @@ public class DailyPrayerController {
             Optional<User> userDetails = dailyPrayerService.getUserDetails(dailyPrayer.getUsername());
 
             if (userDetails.isEmpty()) {
+                System.out.println("user not found");
                 return ResponseEntity.ok(new ApiResponse(false, "User not found"));
             }
 
@@ -55,8 +56,9 @@ public class DailyPrayerController {
             );
 
             dailyPrayerService.saveDailyPrayer(dailyPrayer);
-            return ResponseEntity.ok(new ApiResponse(true, "Daily prayer created successfully"));
+            return ResponseEntity.ok(dailyPrayer);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.internalServerError()
                     .body(new ApiResponse(false, "Error creating daily prayer: " + e.getMessage()));
         }
