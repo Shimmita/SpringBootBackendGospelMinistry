@@ -1,7 +1,6 @@
 package com.shimita.crud.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,30 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shimita.crud.model.Announcement;
-import com.shimita.crud.model.User;
 import com.shimita.crud.model.WeeklyPrayer;
-import com.shimita.crud.service.DailyPrayerService;
 import com.shimita.crud.service.WeeklyService;
-
-// ✅ same ApiResponse as used in UserController
-class ApiResponse {
-    private boolean success;
-    private String message;
-
-    public ApiResponse(boolean success, String message) {
-        this.success = success;
-        this.message = message;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-}
 
 @RestController
 @RequestMapping("/api/v1/weekly")
