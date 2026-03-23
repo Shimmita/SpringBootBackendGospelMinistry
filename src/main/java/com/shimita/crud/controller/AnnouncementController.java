@@ -19,7 +19,7 @@ public class AnnouncementController {
     @Autowired
     AnnouncementService announcementService;
 
-    // ✅ create
+    //  create
     @PostMapping("/create")
     public ResponseEntity<?> createAnnouncementEntity(@RequestBody Announcement announcement) {
 
@@ -32,7 +32,7 @@ public class AnnouncementController {
         }
     }
 
-    // ✅ Get all
+    // Get all
     @GetMapping("/all")
     public ResponseEntity<?> getAllAnnouncement() {
         try {
